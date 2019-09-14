@@ -45,6 +45,10 @@ do { \
 #define STACK_FINI() stack_destroy(stack_global)
 #define STACK_FINI_R(name) stack_destroy(name)
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern struct stack *stack_global;
 
 extern struct stack *stack_create(size_t);
@@ -53,5 +57,9 @@ extern void stack_destroy(struct stack *);
 extern void stack_push(void *, size_t, struct stack *);
 extern void stack_pop(void *, size_t, struct stack *);
 extern void stack_peek(void *, size_t, struct stack *);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
