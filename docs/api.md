@@ -54,12 +54,9 @@ It also frees the internal buffer inside
 stack_push
 ---
 
-    void stack_push(void *val, size_t size, struct stack *stack)
+    int stack_push(void *val, size_t size, struct stack *stack)
 
 `stack_push` pushes `size` bytes from `val` onto `stack`.
-
-NOTE: You should not use this function directly; use the wrapper
-macro `push` supplied by `stack.h` instead.
 
 If there is not enough space left in `stack` to satisfy this request,
 this function will emit a runtime error and abort.
@@ -71,15 +68,12 @@ the new value of the buffer.
 stack_pop
 ---
 
-    void stack_pop(void *val, size_t size, struct stack *stack)
+    int stack_pop(void *val, size_t size, struct stack *stack)
 
 `stack_push` pops `size` bytes from `stack` into `val`.
 
-NOTE: You should not use this function directly; use the wrapper
-macro `pop` supplied by `stack.h` instead.
-
 If there is not enough data left in `stack` to satisfy this request,
-this function will emit a runtime error and abort.
+this function will return -1.
 
 This function first copies `size` bytes from the internal buffer
 contained within `stack` to `val` and then adds `size` bytes to
@@ -88,111 +82,14 @@ the internal buffer contained within `stack`.
 stack_peek
 ---
 
-    void stack_peek(void *val, size_t size, struct stack *stack)
+    int stack_peek(void *val, size_t size, struct stack *stack)
 
 `stack_peek` copies `size` bytes from `stack` into `val`.
 
-NOTE: You should not use this function directly; use the wrapper
-macro `peek` supplied by `stack.h` instead.
+This function always returns 0.
 
 This stack copies `size` bytes from the internal buffer
 contained within `stack`. `stack` is not modified.
-
-# VARIABLES
-
-stack_global
----
-
-    extern struct stack *stack_global;
-
-This is a global pointer to a variable of type `struct stack`.
-It must be initialized before use, see `STACK_INIT`.
-
-# MACROS
-
-stack_op
----
-
-        #define stack_op(x, y) stack_##y(&x, sizeof(x), stack_global)
-
-You should not use this macro directly; use `push`,
-`pop`, and `peek` instead.
-
-push
----
-
-        #define push(var) stack_op(var, push)
-
-This macro pushes `var` onto the stack. Do not pass the
-address of a variable to `push`; the address is already
-taken in the call to `stack_op`.
-
-pop
----
-
-        #define pop(var) stack_op(var, pop)
-
-This macro pops a value from the stack into `var`.
-Do not pass the address of a variable to `pop`;
-the address is already taken in the call to `stack_op`.
-
-peek
----
-
-        #define peek(var) stack_op(var, peek)
-
-This macro copies a value from the stack into `var`.
-Do not pass the address of a variable to `peek`;
-the address is already taken in the call to `stack_op`.
-
-STACK_INIT
----
-
-        #define STACK_INIT(size) \
-        do { \
-            STACK_FINI(); \
-            stack_global = stack_create(size); \
-        } while(0)
-
-This macro destroys and reinitializes `stack_global`.
-Do not try to use the return value of this macro.
-
-Call this macro with:
-
-        STACK_INIT(size);
-
-STACK_FINI
----
-
-        #define STACK_FINI() stack_destroy(stack_global)
-
-This macro destroys the stack.
-
-# REENTRANCY
-
-Some of the macros provided here have reentrant counterparts
-(signified with `_r` or `_R`) that operate on a local stack
-instead of a global stack.
-
-Some notable mentions:
-
-  * Do not call `stack_create` or `stack_destroy` inside a signal handler.
-
-    This by extension includes `STACK_INIT*` and `STACK_FINI*`.
-
-  * You must initialize the varible that you pass to `STACK_INIT_R`
-    if the variable is local.
-
-These functions ar similar to their non-reentrant equivalents except that
-they receive the stack variable as a second argument.
-
-i.e.
-
-        push(var);
-
-vs.
-
-        push_r(var, stack);
 
 # MISCELLANEOUS
 
@@ -201,8 +98,8 @@ As a workaround, use C99's compund literals.
 
 invalid:
 
-        push((var)constant);
+        stack_push((var)constant, sizeof(constant), stack);
 
 valid:
 
-        push((var){constant});
+        stack_push((var[1]){constant}, sizeof(constant), stack);

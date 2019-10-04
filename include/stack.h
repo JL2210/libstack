@@ -20,43 +20,33 @@
 #ifndef STACK_H
 #define STACK_H 1
 
-#include <stddef.h>
-
-#define stack_op(var, op) stack_##op(&(var), sizeof(var), stack_global)
-#define stack_op_r(var, op, stack) stack_##op(&(var), sizeof(var), (stack))
-
-#define push(var) stack_op(var, push)
-#define pop(var) stack_op(var, pop)
-#define peek(var) stack_op(var, peek)
-#define push_r(var, stack) stack_op_r(var, push, stack)
-#define pop_r(var, stack) stack_op_r(var, pop, stack)
-#define peek_r(var, stack) stack_op_r(var, peek, stack)
-
-#define STACK_INIT(size) \
-do { \
-    STACK_FINI(); \
-    stack_global = stack_create(size); \
-} while(0)
-#define STACK_INIT_R(size, name) \
-do { \
-    STACK_FINI_R(name); \
-    name = stack_create(size); \
-} while(0)
-#define STACK_FINI() stack_destroy(stack_global)
-#define STACK_FINI_R(name) stack_destroy(name)
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-extern struct stack *stack_global;
+struct stack;
 
-extern struct stack *stack_create(size_t);
-extern int stack_resize(struct stack *, size_t);
-extern void stack_destroy(struct stack *);
-extern void stack_push(void *, size_t, struct stack *);
-extern void stack_pop(void *, size_t, struct stack *);
-extern void stack_peek(void *, size_t, struct stack *);
+/* size: size of the stack to create
+ * return: NULL on error, pointer to
+ *         struct stack otherwise
+ */
+struct stack *stack_create(size_t size);
+/* stack: the stack to resize
+ * new_size: the new size of the stack
+ * return: 0 on success, -1 on failure
+ */
+int stack_resize(struct stack *stack, size_t new_size);
+/* stack: the stack to destroy
+ * return: none
+ */
+void stack_destroy(struct stack *stack);
+/* size: size of memory to be copied to/from the stack
+ * stack: the stack to push/pop/peek to/from/into
+ * return: -1 on error, 0 on success
+ */
+int stack_push(void *input, size_t size, struct stack *stack);
+int stack_pop(void *output, size_t size, struct stack *stack);
+int stack_peek(void *output, size_t size, struct stack *stack);
 
 #ifdef __cplusplus
 }
