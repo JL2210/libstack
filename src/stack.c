@@ -58,7 +58,10 @@ struct stack *stack_create(size_t size)
     {
         ret->beg = ret->cur = malloc(size);
         if(!ret->beg)
+        {
+            free(ret);
             return NULL;
+        }
         ret->size = size;
         ret->end = ret->beg + size;
     }
