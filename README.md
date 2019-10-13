@@ -21,8 +21,6 @@ a stack.
 
 Documentation is located in `docs/`.
 
-Tests are located in `tests/`.
-
 To build, use the usual idiom:
 
     $ ./configure

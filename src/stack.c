@@ -37,7 +37,7 @@
 # include <stdnoreturn.h>
 #endif
 
-#define ezs(x) (x)
+#define cast(x) (x)
 
 struct stack {
     uint8_t *beg;
@@ -77,7 +77,7 @@ int stack_resize(struct stack *stack, size_t newsize)
     if(!newsize)
         return -1;
 
-    off = ezs(size_t)(stack->cur - stack->beg);
+    off = cast(size_t)(stack->cur - stack->beg);
 
     if(off > newsize)
         off = newsize;
@@ -106,7 +106,7 @@ void stack_destroy(struct stack *stack)
 
 int stack_push(void *val, size_t size, struct stack *stack)
 {
-    if(ezs(size_t)(stack->end - stack->cur) < size)
+    if(cast(size_t)(stack->end - stack->cur) < size)
         return -1;
 
     memcpy(stack->cur, val, size);
@@ -116,7 +116,7 @@ int stack_push(void *val, size_t size, struct stack *stack)
 
 int stack_pop(void *val, size_t size, struct stack *stack)
 {
-    if(ezs(size_t)(stack->cur - stack->beg) < size)
+    if(cast(size_t)(stack->cur - stack->beg) < size)
         return -1;
 
     stack->cur -= size;

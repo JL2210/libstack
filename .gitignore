@@ -1,7 +1,6 @@
 aclocal.m4
 autom4te.cache
-build-aux
+build-aux/
 configure
-m4
 Makefile.in
-.deps
+.deps/

@@ -80,13 +80,13 @@ naming
 casting
 ---
 
-  * casts must be done by using `ugly_cast` from `stack_internal.h` like so
+  * casts must be done by using `cast` like so
 
-        ugly_cast(type)expression
+        cast(type)expression
 
     or
 
-        ugly_cast(type)(expressions)
+        cast(type)(expressions)
 
 preprocessor
 ---
