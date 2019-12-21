@@ -23,20 +23,6 @@
 #include <string.h>
 #include <stdint.h>
 
-#if !defined(__STDC_VERSION__) || __STDC_VERSION__ < 201112L
-# if defined(__cplusplus) && __cplusplus >= 201103L
-#  define noreturn [[noreturn]]
-# else
-#  ifdef __GNUC__
-#   define noreturn __attribute__((__noreturn__))
-#  else
-#   define noreturn
-#  endif
-# endif
-#else
-# include <stdnoreturn.h>
-#endif
-
 #define cast(x) (x)
 
 struct stack {
@@ -57,6 +43,7 @@ struct stack *stack_create(size_t size)
     if(ret)
     {
         ret->beg = ret->cur = malloc(size);
+
         if(!ret->beg)
         {
             free(ret);
