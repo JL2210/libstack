@@ -18,11 +18,7 @@
  */
 
 #ifndef STACK_H
-#define STACK_H 1
-
-#ifdef __cplusplus
-extern "C" {
-#endif
+# define STACK_H 1
 
 struct stack;
 
@@ -47,9 +43,5 @@ void stack_destroy(struct stack *stack);
 int stack_push(void *input, size_t size, struct stack *stack);
 int stack_pop(void *output, size_t size, struct stack *stack);
 int stack_peek(void *output, size_t size, struct stack *stack);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

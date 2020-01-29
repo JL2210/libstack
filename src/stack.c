@@ -18,17 +18,23 @@
  */
 
 #include <stdio.h>
-#include <stack.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdint.h>
 
+#include "stack.h"
+
+/* make casts easier to search */
 #define cast(x) (x)
 
-struct stack {
-    uint8_t *beg;
-    uint8_t *cur;
-    uint8_t *end;
+/* stack structure */
+struct stack
+{
+    /* beginning */
+    unsigned char *beg;
+    /* current pointer */
+    unsigned char *cur;
+    /* self-explanatory */
+    unsigned char *end;
     size_t size;
 };
 
@@ -36,10 +42,13 @@ struct stack *stack_create(size_t size)
 {
     struct stack *ret;
 
+    /* return NULL if size is zero */
     if(!size)
         return NULL;
 
     ret = malloc(sizeof(*ret));
+    /* if malloc returned NULL, we skip this
+       and return NULL */
     if(ret)
     {
         ret->beg = ret->cur = malloc(size);
@@ -49,6 +58,7 @@ struct stack *stack_create(size_t size)
             free(ret);
             return NULL;
         }
+
         ret->size = size;
         ret->end = ret->beg + size;
     }
@@ -58,14 +68,17 @@ struct stack *stack_create(size_t size)
 
 int stack_resize(struct stack *stack, size_t newsize)
 {
-    uint8_t *newptr;
+    unsigned char *newptr;
     size_t off;
 
+    /* return error if newsize is 0 */
     if(!newsize)
         return -1;
 
+    /* calculate offset */
     off = cast(size_t)(stack->cur - stack->beg);
 
+    /* if offset is too big truncate it */
     if(off > newsize)
         off = newsize;
 
@@ -74,6 +87,7 @@ int stack_resize(struct stack *stack, size_t newsize)
     if(!newptr)
         return -1;
 
+    /* set the remaining bytes to 0 */
     if(newsize > stack->size)
         memset(newptr + stack->size, 0, newsize - stack->size);
 
@@ -93,6 +107,7 @@ void stack_destroy(struct stack *stack)
 
 int stack_push(void *val, size_t size, struct stack *stack)
 {
+    /* if there's not enough space left return an error */
     if(cast(size_t)(stack->end - stack->cur) < size)
         return -1;
 
@@ -103,6 +118,7 @@ int stack_push(void *val, size_t size, struct stack *stack)
 
 int stack_pop(void *val, size_t size, struct stack *stack)
 {
+    /* if there's not enough data left return an error */
     if(cast(size_t)(stack->cur - stack->beg) < size)
         return -1;
 
@@ -113,6 +129,7 @@ int stack_pop(void *val, size_t size, struct stack *stack)
 
 int stack_peek(void *val, size_t size, struct stack *stack)
 {
+    /* this function has no errors */
     memcpy(val, stack->cur, size);
     return 0;
 }
